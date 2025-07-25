@@ -12,4 +12,7 @@ public interface TeamService {
     List<TeamDto> getTeamsByUserId(Long userId);
 
     void deleteTeam(Long teamId, Long ownerId);
+
+    void updateBaseKill(Long teamId, int newBaseKill, Long adminUserId);
+
 }

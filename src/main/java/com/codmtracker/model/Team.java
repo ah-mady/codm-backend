@@ -18,6 +18,7 @@ public class Team {
 
     private String name;
     private Instant createdAt;
+    private int baseKill = 5;
 
     @ManyToOne
     private User owner;

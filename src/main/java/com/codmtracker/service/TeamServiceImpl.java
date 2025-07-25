@@ -65,4 +65,14 @@ public class TeamServiceImpl implements TeamService {
         Team team = teamRepository.findByIdAndOwnerId(teamId, ownerId).orElseThrow();
         teamRepository.delete(team);
     }
+
+    @Override
+    public void updateBaseKill(Long teamId, int newBaseKill, Long adminUserId) {
+        com.codmtracker.model.Team team = teamRepository.findById(teamId).orElseThrow();
+        if (!team.getOwner().getId().equals(adminUserId))
+            throw new RuntimeException("Only the team admin can update base kill.");
+        team.setBaseKill(newBaseKill);
+        teamRepository.save(team);
+    }
+
 }

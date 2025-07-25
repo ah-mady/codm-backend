@@ -14,4 +14,5 @@ public class TeamDto {
     private String name;
     private Instant createdAt;
     private Long ownerId;
+    private int baseKill;
 }
