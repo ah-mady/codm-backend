@@ -1,4 +1,8 @@
 package com.codmtracker.service;
 
-public class OcrService {
+import com.codmtracker.dto.OcrResultDto;
+import org.springframework.web.multipart.MultipartFile;
+
+public interface OcrService {
+    OcrResultDto processGameScreenshot(MultipartFile file, Long teamId);
 }

@@ -1,4 +1,7 @@
 package com.codmtracker.repository;
 
-public class AuditActionRepository {
+import com.codmtracker.model.AuditAction;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AuditActionRepository extends JpaRepository<AuditAction, Long> {
 }

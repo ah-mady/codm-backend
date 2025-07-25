@@ -1,4 +1,8 @@
 package com.codmtracker.service;
 
-public class ImportService {
+import com.codmtracker.dto.ImportResultDto;
+import org.springframework.web.multipart.MultipartFile;
+
+public interface ImportService {
+    ImportResultDto importFromExcel(MultipartFile file, Long teamId);
 }
