@@ -1,6 +1,7 @@
 package com.codmtracker.service;
 
 import com.codmtracker.dto.PlayerDto;
+import com.codmtracker.exception.CustomException;
 import com.codmtracker.model.Player;
 import com.codmtracker.model.Team;
 import com.codmtracker.model.User;
@@ -25,8 +26,10 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto createPlayer(PlayerDto dto) {
-        Team team = teamRepository.findById(dto.getTeamId()).orElseThrow();
-        User user = userRepository.findById(dto.getUserId()).orElseThrow();
+        Team team = teamRepository.findById(dto.getTeamId())
+                .orElseThrow(() -> new CustomException("Team not found", 404));
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new CustomException("User not found", 404));
         Player player = Player.builder()
                 .codmName(dto.getCodmName())
                 .roleType(dto.getRoleType())
@@ -47,7 +50,8 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDto getPlayerById(Long playerId) {
-        Player player = playerRepository.findById(playerId).orElseThrow();
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new CustomException("Player not found", 404));
         return PlayerDto.builder()
                 .id(player.getId())
                 .codmName(player.getCodmName())

@@ -1,6 +1,7 @@
 package com.codmtracker.service;
 
 import com.codmtracker.dto.DebtDto;
+import com.codmtracker.exception.CustomException;
 import com.codmtracker.model.Debt;
 import com.codmtracker.repository.DebtRepository;
 import com.codmtracker.repository.PlayerRepository;
@@ -20,7 +21,8 @@ public class DebtServiceImpl implements DebtService {
 
     @Override
     public DebtDto getDebtByPlayerId(Long playerId) {
-        Debt d = debtRepository.findByPlayerId(playerId).orElseThrow();
+        Debt d = debtRepository.findByPlayerId(playerId)
+                .orElseThrow(() -> new CustomException("Debt not found", 404));
         return DebtDto.builder()
                 .id(d.getId())
                 .playerId(playerId)
@@ -31,6 +33,9 @@ public class DebtServiceImpl implements DebtService {
 
     @Override
     public List<DebtDto> getDebtsByTeamId(Long teamId) {
+        List<Debt> debts = debtRepository.findByTeamId(teamId);
+        if (debts == null || debts.isEmpty())
+            throw new CustomException("No debts found for team", 404);
         return debtRepository.findByTeamId(teamId)
                 .stream()
                 .map(d -> DebtDto.builder()

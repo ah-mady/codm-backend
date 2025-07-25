@@ -2,6 +2,7 @@ package com.codmtracker.service;
 
 import com.codmtracker.dto.GameDto;
 import com.codmtracker.dto.KillDto;
+import com.codmtracker.exception.CustomException;
 import com.codmtracker.model.Game;
 import com.codmtracker.model.GameParticipant;
 import com.codmtracker.model.Player;
@@ -52,7 +53,8 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public GameDto getGameById(Long gameId) {
-        Game g = gameRepository.findById(gameId).orElseThrow();
+        Game g = gameRepository.findById(gameId)
+                .orElseThrow(() -> new CustomException("Game not found", 404));
         List<KillDto> participants = g.getParticipants().stream().map(
                 part -> KillDto.builder()
                         .playerId(part.getPlayer().getId())

@@ -1,7 +1,13 @@
 package com.codmtracker.exception;
 
+import lombok.Getter;
+
+@Getter
 public class CustomException extends RuntimeException {
-    public CustomException(String message) {
+    private final int status;
+
+    public CustomException(String message, int status) {
         super(message);
+        this.status = status;
     }
 }

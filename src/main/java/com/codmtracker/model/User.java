@@ -12,11 +12,11 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "app_user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String email;
     private String passwordHash;
     private boolean emailVerified;

@@ -1,6 +1,7 @@
 package com.codmtracker.service;
 
 import com.codmtracker.dto.TeamDto;
+import com.codmtracker.exception.CustomException;
 import com.codmtracker.model.Team;
 import com.codmtracker.model.User;
 import com.codmtracker.repository.TeamRepository;
@@ -39,12 +40,14 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDto getTeamById(Long teamId) {
-        Team team = teamRepository.findById(teamId).orElseThrow();
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException("Team not found", 404));
         return TeamDto.builder()
                 .id(team.getId())
                 .name(team.getName())
                 .createdAt(team.getCreatedAt())
                 .ownerId(team.getOwner().getId())
+                .baseKill(team.getBaseKill())
                 .build();
     }
 
@@ -68,11 +71,13 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void updateBaseKill(Long teamId, int newBaseKill, Long adminUserId) {
-        com.codmtracker.model.Team team = teamRepository.findById(teamId).orElseThrow();
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException("Team not found", 404));
         if (!team.getOwner().getId().equals(adminUserId))
-            throw new RuntimeException("Only the team admin can update base kill.");
+            throw new CustomException("Only the team admin can update base kill.", 403);
         team.setBaseKill(newBaseKill);
         teamRepository.save(team);
     }
+
 
 }

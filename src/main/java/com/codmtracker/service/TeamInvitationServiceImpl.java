@@ -1,6 +1,7 @@
 package com.codmtracker.service;
 
 import com.codmtracker.dto.TeamInvitationDto;
+import com.codmtracker.exception.CustomException;
 import com.codmtracker.model.Team;
 import com.codmtracker.model.TeamInvitation;
 import com.codmtracker.model.User;
@@ -27,8 +28,10 @@ public class TeamInvitationServiceImpl implements TeamInvitationService {
 
     @Override
     public void sendInvitation(String invitedEmail, Long teamId, Long invitedByUserId) {
-        Team team = teamRepository.findById(teamId).orElseThrow();
-        User inviter = userRepository.findById(invitedByUserId).orElseThrow();
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException("Team not found", 404));
+        User inviter = userRepository.findById(invitedByUserId)
+                .orElseThrow(() -> new CustomException("User not found", 404));
         TeamInvitation invitation = TeamInvitation.builder()
                 .invitedEmail(invitedEmail)
                 .token(UUID.randomUUID().toString())
@@ -42,7 +45,10 @@ public class TeamInvitationServiceImpl implements TeamInvitationService {
 
     @Override
     public void acceptInvitation(String token, Long userId) {
-        TeamInvitation invitation = invitationRepository.findByToken(token).orElseThrow();
+        TeamInvitation invitation = invitationRepository.findByToken(token)
+                .orElseThrow(() -> new CustomException("Invitation not found", 404));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException("User not found", 404));
         invitation.setAccepted(true);
         invitationRepository.save(invitation);
     }
@@ -64,7 +70,8 @@ public class TeamInvitationServiceImpl implements TeamInvitationService {
 
     @Override
     public void cancelInvitation(Long invitationId, Long teamId) {
-        TeamInvitation invitation = invitationRepository.findByIdAndTeamId(invitationId, teamId).orElseThrow();
+        TeamInvitation invitation = invitationRepository.findByIdAndTeamId(invitationId, teamId)
+                .orElseThrow(() -> new CustomException("Invitation not found", 404));
         invitationRepository.delete(invitation);
     }
 }

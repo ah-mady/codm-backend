@@ -18,6 +18,7 @@ public class Team {
 
     private String name;
     private Instant createdAt;
+    @Builder.Default
     private int baseKill = 5;
 
     @ManyToOne
