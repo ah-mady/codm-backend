@@ -20,8 +20,7 @@ public class JwtTokenProvider {
     private long jwtExpirationMs;
 
     private Key getSigningKey() {
-        byte[] keyBytes = Base64.getDecoder().decode(jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecret));
     }
 
     public String generateToken(String email, List<String> roles) {

@@ -4,7 +4,10 @@ import com.codmtracker.dto.AuthRequestDto;
 import com.codmtracker.dto.AuthResponseDto;
 import com.codmtracker.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -14,8 +17,9 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signup")
-    public AuthResponseDto signup(@RequestBody AuthRequestDto request) {
-        return authService.signup(request);
+    public ResponseEntity<?> signup(@RequestBody AuthRequestDto request) {
+        authService.signup(request);
+        return ResponseEntity.ok(Map.of("message", "Signup successful. Please verify your email."));
     }
 
     @PostMapping("/login")
@@ -23,23 +27,21 @@ public class AuthController {
         return authService.login(request);
     }
 
-    @PostMapping("/email-confirmation")
-    public void sendConfirmation(@RequestParam String email) {
-        authService.sendEmailConfirmation(email);
-    }
-
     @GetMapping("/confirm")
-    public void confirm(@RequestParam String token) {
+    public ResponseEntity<?> confirm(@RequestParam String token) {
         authService.confirmEmail(token);
+        return ResponseEntity.ok(Map.of("message", "Email verified. You can now login."));
     }
 
     @PostMapping("/password-reset")
-    public void sendReset(@RequestParam String email) {
-        authService.sendPasswordReset(email);
+    public ResponseEntity<?> requestPasswordReset(@RequestParam String email) {
+        authService.requestPasswordReset(email);
+        return ResponseEntity.ok(Map.of("message", "Reset email sent if that account exists."));
     }
 
     @PostMapping("/reset")
-    public void resetPassword(@RequestParam String token, @RequestParam String password) {
+    public ResponseEntity<?> resetPassword(@RequestParam String token, @RequestParam String password) {
         authService.resetPassword(token, password);
+        return ResponseEntity.ok(Map.of("message", "Password updated. You can now login."));
     }
 }
