@@ -1,36 +1,45 @@
 package com.codmtracker.controller;
 
-import com.codmtracker.dto.TeamInvitationDto;
+import com.codmtracker.model.TeamInvitation;
+import com.codmtracker.security.SecurityUtils;
 import com.codmtracker.service.TeamInvitationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/invitations")
+@RequestMapping("/api")
 public class TeamInvitationController {
 
     @Autowired
-    private TeamInvitationService invitationService;
+    private TeamInvitationService teamInvitationService;
 
-    @PostMapping
-    public void sendInvitation(@RequestParam String email, @RequestParam Long teamId, @RequestParam Long invitedById) {
-        invitationService.sendInvitation(email, teamId, invitedById);
+    @PostMapping("/teams/{teamId}/invites")
+    public TeamInvitation createInvite(@PathVariable Long teamId, @RequestParam String email, @RequestParam String role) {
+        String actor = SecurityUtils.getCurrentUserEmail();
+        return teamInvitationService.createInvite(teamId, email, role, actor);
     }
 
-    @PostMapping("/accept")
-    public void acceptInvitation(@RequestParam String token, @RequestParam Long userId) {
-        invitationService.acceptInvitation(token, userId);
+    @DeleteMapping("/teams/{teamId}/invites/{inviteId}")
+    public ResponseEntity<?> cancelInvite(@PathVariable Long teamId, @PathVariable Long inviteId) {
+        String actor = SecurityUtils.getCurrentUserEmail();
+        teamInvitationService.cancelInvite(teamId, inviteId, actor);
+        return ResponseEntity.ok(Map.of("message", "Invitation cancelled"));
     }
 
-    @GetMapping("/team/{teamId}/pending")
-    public List<TeamInvitationDto> getPendingInvitations(@PathVariable Long teamId) {
-        return invitationService.getPendingInvitations(teamId);
+    @GetMapping("/teams/{teamId}/invites")
+    public List<TeamInvitation> listInvites(@PathVariable Long teamId) {
+        String actor = SecurityUtils.getCurrentUserEmail();
+        return teamInvitationService.listPendingInvites(teamId, actor);
     }
 
-    @DeleteMapping("/{invitationId}")
-    public void cancelInvitation(@PathVariable Long invitationId, @RequestParam Long teamId) {
-        invitationService.cancelInvitation(invitationId, teamId);
+    @PostMapping("/invites/accept")
+    public ResponseEntity<?> accept(@RequestParam String token) {
+        String actor = SecurityUtils.getCurrentUserEmail();
+        teamInvitationService.acceptInvite(token, actor);
+        return ResponseEntity.ok(Map.of("message", "Invitation accepted"));
     }
 }

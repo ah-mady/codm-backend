@@ -34,4 +34,14 @@ public class EmailServiceImpl implements EmailService {
         msg.setText("Reset your password here: " + url);
         mailSender.send(msg);
     }
+
+    @Override
+    public void sendTeamInviteEmail(String email, String token, String teamName) {
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setTo(email);
+        msg.setSubject("You are invited to join team: " + teamName);
+        String url = frontendUrl + "/invites/accept?token=" + token;
+        msg.setText("You have been invited to join team " + teamName + ". Accept here: " + url);
+        mailSender.send(msg);
+    }
 }

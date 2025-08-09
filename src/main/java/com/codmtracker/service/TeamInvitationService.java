@@ -1,15 +1,15 @@
 package com.codmtracker.service;
 
-import com.codmtracker.dto.TeamInvitationDto;
+import com.codmtracker.model.TeamInvitation;
 
 import java.util.List;
 
 public interface TeamInvitationService {
-    void sendInvitation(String invitedEmail, Long teamId, Long invitedByUserId);
+    TeamInvitation createInvite(Long teamId, String invitedEmail, String role, String inviterEmail);
 
-    void acceptInvitation(String token, Long userId);
+    void cancelInvite(Long teamId, Long invitationId, String actorEmail);
 
-    List<TeamInvitationDto> getPendingInvitations(Long teamId);
+    List<TeamInvitation> listPendingInvites(Long teamId, String actorEmail);
 
-    void cancelInvitation(Long invitationId, Long teamId);
+    void acceptInvite(String token, String actorEmail);
 }
