@@ -44,6 +44,19 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
+    @SuppressWarnings("unchecked")
+    public List<String> getRolesFromToken(String token) {
+        Object val = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roles");
+        if (val == null) return List.of();
+        if (val instanceof List<?> l) return l.stream().map(Object::toString).toList();
+        return List.of();
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);

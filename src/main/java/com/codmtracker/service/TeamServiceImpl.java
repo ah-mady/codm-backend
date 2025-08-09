@@ -23,7 +23,8 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDto createTeam(TeamDto dto, Long ownerId) {
-        User owner = userRepository.findById(ownerId).orElseThrow();
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new CustomException("Could not create Team.", 404));
         Team team = Team.builder()
                 .name(dto.getName())
                 .createdAt(Instant.now())
